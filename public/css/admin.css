@@ -1,0 +1,9 @@
+.float-left{float:left;}
+.float-left-10{float:left;margin-left:10px;}
+.float-left-15{float:left;margin-left:15px;}
+.float-left-20{float:left;margin-left:20px;}
+.float-right{float:right;}
+.float-right-20{float:right;margin-right:10px;}
+.float-right-20{float:right;margin-right:15px;}
+.float-right-20{float:right;margin-right:20px;}
+.hidden {display: hidden;}

@@ -1,0 +1,11 @@
+@extends('admin.base')
+ 
+@section('title', 'LayUi后台管理系统')
+
+@section('content')
+  <div style="padding: 15px;">内容主体区域</div>
+@endsection
+
+@section('script')
+
+@endsection 
