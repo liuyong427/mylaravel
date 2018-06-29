@@ -15,7 +15,7 @@
       <th lay-data="{field:'id',  sort: true, fixed: true}">ID</th>
       <th lay-data="{field:'name'}">用户名</th>
       <th lay-data="{field:'email', sort: true}">邮箱</th>
-      <th lay-data="{field:'status', sort: true }">状态</th>
+      <th lay-data="{field:'status', sort: true, templet: '#stattusTpl' }">状态</th>
       <th lay-data="{fixed: 'right', align:'center', toolbar: '#barDemo'}">操作</th>
     </tr>
   </thead>
@@ -30,6 +30,16 @@
   <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="password">修改密码</a>
   <a class="layui-btn layui-btn-xs" lay-event="edit" ">编辑</a>
   <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
+
+<script type="text/html" id="stattusTpl">
+  @verbatim
+  {{#  if(d.status === 'ON'){ }}
+    <span style="color: #F581B1;">正常</span>
+  {{#  } else { }}
+    禁止
+  {{#  } }}
+  @endverbatim
 </script>
 
 <script>

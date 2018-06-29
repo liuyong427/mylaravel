@@ -21,7 +21,12 @@ class UserController extends BaseController
 	}
     public function index()
     {  
-    	return view('admin.user.index');
+        $page = array_get($_GET,'page',1);
+        $limit = array_get($_GET,'limit',10);
+        $offset = ($page-1) * $limit; 
+        $count = DB::table('users')->count();
+        $data = DB::table('users')->offset($offset)->limit($limit)->get();
+    	return view('admin.user.index')->with(['data'=>$data]);
     }
 
     public function getUserlist(){
