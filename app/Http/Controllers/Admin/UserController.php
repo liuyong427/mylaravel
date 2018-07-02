@@ -9,32 +9,25 @@ use Illuminate\Support\MessageBag;
 use Illuminate\Support\Facades\Hash;
 use Validator;
 use Gate;
-use App\Model\Users;
+use App\Repositories\UserRepository;
 use App\Http\Requests\UserRequest;
 use App\Http\Requests\ResetPasswordRequest;
 
 class UserController extends BaseController
 {
-	public function __construct(Users $users)
+	public function __construct(UserRepository $users)
 	{
 		$this->users = $users;
 	}
     public function index()
     {  
-        $page = array_get($_GET,'page',1);
-        $limit = array_get($_GET,'limit',10);
-        $offset = ($page-1) * $limit; 
-        $count = DB::table('users')->count();
-        $data = DB::table('users')->offset($offset)->limit($limit)->get();
-    	return view('admin.user.index')->with(['data'=>$data]);
+    	return view('admin.user.index');
     }
 
-    public function getUserlist(){
-    	$page = array_get($_GET,'page',1);
-    	$limit = array_get($_GET,'limit',10);
-    	$offset = ($page-1) * $limit; 
-    	$count = DB::table('users')->count();
-    	$data = DB::table('users')->offset($offset)->limit($limit)->get();
+    public function getUserlist(Request $request){
+    	
+    	$count = $this->users->getCount(); 
+    	$data = $this->users->getPageData($request->all());
     	return $this->getlistData($data,$count);	
     }
 
@@ -44,8 +37,7 @@ class UserController extends BaseController
     	if (Gate::denies('update users', $id)) {
 	   		//权限
 		}
-    	$data = $this->users->getRowById($id); 
-    	
+    	$data = $this->users->getOneByid($id); 
     	return view('admin.user.edit')->with('data',$data);
     }
 
@@ -55,19 +47,7 @@ class UserController extends BaseController
     }
     public function store(UserRequest $request)
     {   
-    	/*$validatedData = $request->validate([
-    		'name' => 'bail|required|unique:users',
-    		'email' => 'bail|required|unique:users',
-    		'password' => 'required|string|min:6|confirmed',
-    	]);*/
-    	
-	  //  $validator = Validator::make($request->all(), $rules, $messages);
-		$result =  DB::table('users')->insert([
-            'name' =>$request->input('name'),
-            'email' => $request->input('email'),
-            'status' => $request->input('status'),
-            'password' => Hash::make($request->input('password')),
-	    ]);
+		$result = $this->users->insert($request->all());
 	    if($result == true){
 	    	return $this->arrayAjax('','添加成功',0);
 	    }else{
@@ -78,13 +58,9 @@ class UserController extends BaseController
     public function update(Request $request)
     { 
     	$validatedData = $request->validate([
-    		'email' => 'bail|required',
-    	]); 
-		$result =  DB::table('users')->where('id',$request->input('id'))->update([
-	            'email' => $request->input('email'),
-	            'status' => $request->input('status'),
-	    ]);
-
+            'email' => 'bail|required',
+        ]);
+        $result = $this->users->updateUser($request->all(),$request->input('id'));
 	    if($result == true){
 	    	return $this->arrayAjax('','修改成功',0);
 	    }else{
@@ -97,9 +73,7 @@ class UserController extends BaseController
     	
 	  //  $validator = Validator::make($request->all(), $rules, $messages);
 	  
-    	$result =  DB::table('users')->where('id',$request->input('id'))->update([
-	            'password' => Hash::make($request->input('password')),
-	    ]);
+    	$result = $this->users->resetPassword($request->input('password'),$request->input('id'));
     	 if($result == true){
 	    	return $this->arrayAjax('','修改成功',0);
 	    }else{
