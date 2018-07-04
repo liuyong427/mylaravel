@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Hash;
 
 class UserRepository
 {
+	private $where;
 	public function getOneByid($id){
 		return User::where('id',$id)->first();
 	}
@@ -14,15 +15,17 @@ class UserRepository
         return User::all();
     }
 
-    public function getCount(){
-    	return User::count();
+    public function getCount($arr){
+    	$where = $this->searchWhere($arr);
+    	return User::where($where)->count();
     }
 
     public function getPageData($arr){
     	$page =$arr['page']?$arr['page']:1;
     	$limit = $arr['limit']?$arr['limit']:10;
     	$offset = ($page-1) * $limit; 
-    	return $data =User::offset($offset)->limit($limit)->get();
+    	$where = $this->searchWhere($arr);
+    	return $data =User::where($where)->offset($offset)->limit($limit)->get();
     }
 
     public function insert($arr){
@@ -43,9 +46,32 @@ class UserRepository
 	    return $result;
     }
 
+    public function destroyUser($id){
+    	return User::where('id', $id)->delete();
+    }
+
     public function resetPassword($password,$id){
     	return User::where('id',$id)->update([
 	            'password' => Hash::make($password),
 	    ]);
+    }
+
+    public function searchWhere($arr){
+    	$condition =[]; 
+    	if(isset($arr['key'])){
+    		foreach($arr['key'] as $k => $v){
+    			if($v){
+    				switch($k){
+    					case 'status':
+	    					$condition[] = [$k,$v];
+	    					break;
+    					default:
+    						$condition[] = [$k,'like',"%$v%"];
+    				}
+    			}
+    		}
+    	}
+    
+    	return $condition;
     }
 }

@@ -3,20 +3,51 @@
 
 @section('content')
 
-
 <blockquote class="layui-elem-quote">
-  
-  <a href="{{ url('Admin/User/create') }}" ><button class="layui-btn layui-btn-sm" ><i class="layui-icon">&#xe608;</i> 添加</button></a>
+ <div class="layui-form">
+
+      <a href="{{ url('Admin/User/create') }}" ><button class="layui-btn layui-btn" ><i class="layui-icon">&#xe608;</i> 添加</button></a>
+   
+   <from id="searchForm">
+    <div class="layui-inline">
+      <label class="layui-form-label">用户名</label>
+      <div class="layui-input-block">
+        <input type="text" name="name" id="name" placeholder="请输入" autocomplete="off" class="layui-input">
+      </div>
+    </div>
+    <div class="layui-inline">
+      <label class="layui-form-label">邮箱</label>
+      <div class="layui-input-block">
+        <input type="text" name="email" id="email" placeholder="请输入" autocomplete="off" class="layui-input">
+      </div>
+    </div>
+    <div class="layui-inline">
+      <label class="layui-form-label">状态</label>
+      <div class="layui-input-block">
+        <select name="status" id="status">
+          <option value="">选择</option>
+          <option value="ON">正常</option>
+          <option value="OFF">禁止</option>
+        </select>
+      </div>
+    </div>
+    <div class="layui-inline">
+      <button class="layui-btn layuiadmin-btn-admin search" data-type="reload">
+        <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
+      </button>
+    </div>
+   </from>
+  </div>
 </blockquote>
-<table class="layui-table" lay-data="{ url:'{{url('Admin/User/getUserlist')}}', page:true, limit:10, id:'idTest'}" lay-filter="demo">
+
+<table class="layui-table" id="usertable" lay-data="{ url:'{{url('Admin/User/getUserlist')}}', page:true, limit:10, id:'idTest'}" lay-filter="demo">
   <thead>
     <tr>
-      <th lay-data="{type:'checkbox', fixed: 'left'}"></th>
-      <th lay-data="{field:'id',  sort: true, fixed: true}">ID</th>
+      <th lay-data="{field:'id',  sort: true}">ID</th>
       <th lay-data="{field:'name'}">用户名</th>
       <th lay-data="{field:'email', sort: true}">邮箱</th>
       <th lay-data="{field:'status', sort: true, templet: '#stattusTpl' }">状态</th>
-      <th lay-data="{fixed: 'right', align:'center', toolbar: '#barDemo'}">操作</th>
+      <th lay-data="{ align:'center', toolbar: '#barDemo'}">操作</th>
     </tr>
   </thead>
 </table>
@@ -43,14 +74,35 @@
 </script>
 
 <script>
-layui.use(['table','layer'], function(){
+layui.use(['table','layer','form'], function(){
   var table = layui.table;
   var layer = layui.layer;
-  //监听表格复选框选择
-  table.on('checkbox(#demo)', function(obj){
-    console.log(obj)
+  var form = layui.form;
+  var $ = layui.$;
+//搜索
+var  active = {
+    reload: function(){
+     name = $("#name").val();
+     email = $("#email").val();
+     status=  $("#status").val();
+      //执行重载
+      table.reload('idTest', {
+        page: {
+          curr: 1 //重新从第 1 页开始
+        }
+        ,where: {
+          key: {
+            'name': name,'email':email,'status':status
+          }
+        }
+      });
+    }
+  };
+  $('.search').on('click', function(){
+    var type = $(this).data('type');
+    active[type] ? active[type].call(this) : '';
   });
- 
+
  //监听工具条
   table.on('tool(demo)', function(obj){
     var data = obj.data;
@@ -74,7 +126,7 @@ layui.use(['table','layer'], function(){
         title:data.name,
         btn: ['确定', '取消'],
         content: pwdhtml, //这里content是一个普通的String
-        btn1: function(index, layero){
+        btn1: function(index, layero){//index指的弹窗
           var $ = layui.$;
           var postdata = $('#password-form').serialize();
           $.ajax({ 
@@ -102,6 +154,33 @@ layui.use(['table','layer'], function(){
       });
     } else if(obj.event === 'del'){
       layer.confirm('真的删除行么', function(index){
+        $.ajax({ 
+            url: "{{ url('Admin/User/destroy') }}" + '/' +data.id, 
+            type:"GET",
+            success: function(data){
+              if(data.code == '0'){
+                  layer.msg(data.msg);
+                  table.reload('idTest', {
+                    page: {
+                      curr: 1 //重新从第 1 页开始
+                    }
+                  });
+                  layer.close(index); //如果设定了yes回调，需进行手工关闭
+              }else{
+                layer.msg(data.msg);
+                return;
+              }
+            },
+            error:function(data){
+               var msg = '';
+              $.each(data.responseJSON.errors, function (key, value) {
+                  msg += value;
+                  msg +="<br>";
+              });
+              layer.msg(msg);
+              return;
+            },
+          });
         obj.del();
         layer.close(index);
       });
@@ -111,27 +190,8 @@ layui.use(['table','layer'], function(){
     }
   });
   
-  var $ = layui.$, active = {
-    getCheckData: function(){ //获取选中数据
-      var checkStatus = table.checkStatus('idTest')
-      ,data = checkStatus.data;
-      layer.alert(JSON.stringify(data));
-    }
-    ,getCheckLength: function(){ //获取选中数目
-      var checkStatus = table.checkStatus('idTest')
-      ,data = checkStatus.data;
-      layer.msg('选中了：'+ data.length + ' 个');
-    }
-    ,isAll: function(){ //验证是否全选
-      var checkStatus = table.checkStatus('idTest');
-      layer.msg(checkStatus.isAll ? '全选': '未全选')
-    }
-  };
+ 
   
-  $('.demoTable .layui-btn').on('click', function(){
-    var type = $(this).data('type');
-    active[type] ? active[type].call(this) : '';
-  });
 });
 
 

@@ -31,6 +31,7 @@ Route::group(['namespace'=>'Admin','prefix'=>'Admin','middleware'=>['auth','chec
 	Route::get('User/edit/{id}','UserController@edit');
 	Route::post('User/store','UserController@store');
 	Route::post('User/update','UserController@update');
+	Route::get('User/destroy/{id}','UserController@destroy');
 	Route::post('User/resetPassword','UserController@resetPassword');
 
 });

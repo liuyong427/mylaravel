@@ -25,8 +25,7 @@ class UserController extends BaseController
     }
 
     public function getUserlist(Request $request){
-    	
-    	$count = $this->users->getCount(); 
+    	$count = $this->users->getCount($request->all()); 
     	$data = $this->users->getPageData($request->all());
     	return $this->getlistData($data,$count);	
     }
@@ -66,6 +65,15 @@ class UserController extends BaseController
 	    }else{
 	    	return $this->arrayAjax('','修改失败',-1);
 	    }
+    }
+
+    public function destroy($id){
+        $result = $this->users->destroyUser($id);
+         if($result == true){
+            return $this->arrayAjax('','删除成功',0);
+        }else{
+            return $this->arrayAjax('','删除失败',-1);
+        }
     }
 
     public function resetPassword(ResetPasswordRequest $request)
