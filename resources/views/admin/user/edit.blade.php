@@ -36,6 +36,15 @@
       <input type="radio" name="sex" value="女" title="女" checked>
     </div>
   </div>
+   <div class="layui-form-item">
+    <label class="layui-form-label">头像</label>
+    <div class="layui-input-block">
+    <img id="head-img" @if( $data->head_img == '')  src="{{ url('/images/head/no-img.png') }}" @endif>
+    <button type="button" class="layui-btn layui-btn-normal" id="upheadimg">选择图片</button>
+    </div>  
+
+    </div>
+  </div>
   <div class="layui-form-item">
     <div class="layui-input-block">
       <button class="layui-btn" lay-submit lay-filter="formDemo">立即提交</button>

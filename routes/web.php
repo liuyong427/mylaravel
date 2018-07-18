@@ -36,3 +36,6 @@ Route::group(['namespace'=>'Admin','prefix'=>'Admin','middleware'=>['auth','chec
 
 });
 
+Route::any('Authenticate/login', 'Webapp\AuthenticateController@login');
+Route::get('/getUser', 'Webapp\AuthenticateController@getUser');
+

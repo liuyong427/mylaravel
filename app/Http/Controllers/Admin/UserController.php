@@ -67,6 +67,11 @@ class UserController extends BaseController
 	    }
     }
 
+    public function show($id){
+        $data = $this->users->getOneByid($id);
+        return view('admin.user.show')->with('data',$data);
+    }
+
     public function destroy($id){
         $result = $this->users->destroyUser($id);
          if($result == true){

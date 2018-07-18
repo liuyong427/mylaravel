@@ -16,3 +16,7 @@ use Illuminate\Http\Request;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::get('/Authenticate/test', 'Webapp\AuthenticateController@test');
+Route::any('Authenticate/login', 'Webapp\AuthenticateController@login');
+Route::any('Authenticate/getUser', 'Webapp\AuthenticateController@getUser');
