@@ -33,6 +33,7 @@ Route::group(['namespace'=>'Admin','prefix'=>'Admin','middleware'=>['auth','chec
 	Route::post('User/update','UserController@update');
 	Route::get('User/destroy/{id}','UserController@destroy');
 	Route::post('User/resetPassword','UserController@resetPassword');
+	Route::get('User/setEvent','UserController@setEvent');
 
 });
 

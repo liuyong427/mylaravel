@@ -13,6 +13,8 @@ use App\Repositories\UserRepository;
 use App\Http\Requests\UserRequest;
 use App\Http\Requests\ResetPasswordRequest;
 
+use App\Events\OrderShipped;
+
 class UserController extends BaseController
 {
 	public function __construct(UserRepository $users)
@@ -92,6 +94,13 @@ class UserController extends BaseController
 	    }else{
 	    	return $this->arrayAjax('','修改失败',-1);
 	    }
+    }
+
+    public function setEvent()
+    {
+        $user = $this->users->getOneByid(1)->toarray();
+        print_R($user);
+        event(new OrderShipped($this->users));
     }
 
 }

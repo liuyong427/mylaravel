@@ -14,7 +14,7 @@ class AddHeadImgToUsersTable extends Migration
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->string('head_img',100);
+            $table->string('head_img',100)->default('');
         });
     }
 
