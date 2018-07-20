@@ -57,10 +57,11 @@ class UserController extends BaseController
     }
 
     public function update(Request $request)
-    { 
+    {  
     	$validatedData = $request->validate([
             'email' => 'bail|required',
         ]);
+
         $result = $this->users->updateUser($request->all(),$request->input('id'));
 	    if($result == true){
 	    	return $this->arrayAjax('','修改成功',0);
@@ -102,5 +103,7 @@ class UserController extends BaseController
         print_R($user);
         event(new OrderShipped($this->users));
     }
+
+    
 
 }
