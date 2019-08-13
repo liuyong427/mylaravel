@@ -20,3 +20,6 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 Route::get('/Authenticate/test', 'Webapp\AuthenticateController@test');
 Route::any('Authenticate/login', 'Webapp\AuthenticateController@login');
 Route::any('Authenticate/getUser', 'Webapp\AuthenticateController@getUser');
+
+Route::get('/', 'Webapp\LoginController@index');
+Route::get('/loginIn', 'Webapp\LoginController@loginIn');

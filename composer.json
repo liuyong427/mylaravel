@@ -9,8 +9,9 @@
         "fideloper/proxy": "^4.0",
         "laravel/framework": "5.6.*",
         "laravel/tinker": "^1.0",
+        "predis/predis": "^1.1",
         "tymon/jwt-auth": "0.5.*",
-        "predis/predis" : "1.1.*"
+        "fusesource/stomp-php": "2.0.*"
     },
     "require-dev": {
         "filp/whoops": "^2.0",
